@@ -75,3 +75,5 @@
 @media(max-width:700px){.promise-strip .wrap{display:flex;flex-direction:column;gap:7px;padding-block:22px;font-size:14px}.promise-divider{display:none}}
 
 [x-cloak] { display: none !important; }
+
+.post-tags,.topic-filter{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.topic-filter{margin:0 0 32px}.tag-link{display:inline-block;max-width:100%;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:13px;line-height:1.5;color:var(--green);background:#fffefb}.tag-link:hover,.tag-link[aria-current="page"]{background:var(--green);color:#fff}.topic-filter a[aria-current]{text-decoration:none}

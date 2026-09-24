@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Services\BlogImages;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
@@ -57,7 +59,15 @@ class PostController extends Controller
             $data['image'] = null;
         }
         try {
-            $post->fill($data)->save();
+            DB::transaction(function () use ($post, $data, $request) {
+                $post->fill($data)->save();
+                // Older forms that omit tags must not remove existing assignments.
+                if ($request->exists('tags')) {
+                    $ids = collect(Tag::names($request->validated('tags') ?? ''))
+                        ->map(fn ($name) => Tag::firstOrCreate(['name' => $name])->id);
+                    $post->tags()->sync($ids);
+                }
+            });
         } catch (\Throwable $e) {
             if ($new) {
                 $images->delete($new);

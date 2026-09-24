@@ -134,3 +134,17 @@ Environment files, dependencies, generated frontend assets, uploaded files and
 runtime storage are excluded. Copy `.env.example` to `.env` and configure the
 new environment separately. Install dependencies with `composer install` and
 `npm ci`, and build frontend assets with `npm run build` during deployment.
+
+## Blog post tags
+
+Administrators can enter up to ten comma-separated tags in the post editor.
+Tags are normalised to lowercase and shared between posts. Clear the field to
+remove assignments. Public cards and articles link to a topic-filtered Field
+notes listing; only published posts dated today or earlier contribute topics
+or results. Filtering is preserved across pagination.
+
+For this release, run `php artisan migrate --force` before serving the updated
+application, then rebuild assets with `npm ci` and `npm run build` and refresh
+any deployment caches. The new `2026_09_24_200000_create_post_tags_tables`
+migration adds tags and their post associations; it does not alter existing
+migrations or post content. Existing posts start without tags.
