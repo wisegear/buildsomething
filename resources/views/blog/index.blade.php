@@ -1,0 +1,3 @@
+@extends('layouts.site')
+@section('title', 'Field notes — blogshed.uk')
+@section('content')<section class="page-intro wrap"><p class="eyebrow">LEARN A LITTLE. MAKE SOMETHING.</p><h1>Notes for <em>the journey.</em></h1><p class="lead">Friendly guides, small discoveries, and a little encouragement to get your ideas out into the world.</p></section><section class="wrap section blog-list"><div class="post-grid">@forelse($posts as $post) @include('blog.card') @empty<div class="empty-state"><span>✳</span><h2>A fresh notebook.</h2><p>The first field notes are on their way. In the meantime, <a href="{{ route('about') }}">get to know blogshed.uk</a>.</p></div>@endforelse</div><div class="pagination">{{ $posts->links() }}</div></section>@endsection
