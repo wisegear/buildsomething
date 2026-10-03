@@ -214,8 +214,17 @@ class WordPressScriptsTest(unittest.TestCase):
         permission_mask = 0o7777 if sys.platform.startswith('linux') else 0o777
         for directory in [self.site, *self.site.rglob('*')]:
             if directory.is_dir():
-                self.assertEqual(directory.stat().st_mode & permission_mask, 0o2750 & permission_mask)
+                expected = 0o2755 if directory == self.site / 'wp-content/uploads' else 0o2750
+                self.assertEqual(directory.stat().st_mode & permission_mask, expected & permission_mask)
         self.assertEqual((self.site / 'wp-config.php').stat().st_mode & 0o777, 0o600)
+        # WordPress derives new directories from the parent's low permission
+        # bits and uploaded files from the directory's read/write bits. A moved
+        # upload may retain a tenant-only group, so Nginx needs other-read.
+        uploads = self.site / 'wp-content/uploads'
+        media_directory_mode = uploads.stat().st_mode & 0o777
+        self.assertEqual(media_directory_mode & 0o005, 0o005)
+        self.assertEqual(media_directory_mode & 0o666, 0o644)
+        self.assertEqual(self.site.stat().st_mode & 0o007, 0)
         self.assertEqual(self.metadata.stat().st_mode & 0o777, 0o600)
         self.assertTrue(self.run_script('delete')['deleted'])
         self.assert_clean()

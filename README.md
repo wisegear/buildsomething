@@ -13,6 +13,13 @@ The public site and account area run in Laravel. Each registered user can reques
 
 Before enabling blog requests on the Laravel/Ploi server:
 
+Install `nginx-blog-fallback.conf` as `/etc/nginx/conf.d/blogshed-fallback.conf`
+on each WordPress hosting server, then run `nginx -t` and reload Nginx. It uses
+the same origin certificate as customer blogs. Unknown subdomains return
+`404 Blog not found` instead of falling through to the first customer blog.
+Only one HTTPS default server can be configured for each listening address;
+check existing defaults before installing this configuration.
+
 1. Run `php artisan migrate --force` and ensure `APP_KEY` is stable and backed up. Changing it makes stored WordPress passwords unreadable.
 2. Add each server in Admin → Servers with its IP address, location, and Active set to Yes. Set `BLOGSHED_SSH_KEY` to the private key path readable by the queue worker. The key should already allow `blogshed-deploy` to run the provisioning script through `sudo` without a password. Keep strict SSH host key checking enabled and add each server's verified host key to the queue worker account's `known_hosts`.
 3. Keep `QUEUE_CONNECTION=database`, `DB_QUEUE_RETRY_AFTER=720` and `BLOGSHED_LOCK_STORE=database`. Run a supervised worker such as `php artisan queue:work database --queue=default --timeout=330 --tries=1`. Restart it after deployments.

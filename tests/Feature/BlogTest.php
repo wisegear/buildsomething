@@ -120,4 +120,24 @@ class BlogTest extends TestCase
         $this->get('/account')->assertOk()->assertSee('Your signup is currently being checked.');
 
     }
+
+    public function test_posts_include_social_preview_metadata_with_absolute_cover_urls(): void
+    {
+        Storage::fake('public');
+        config(['filesystems.disks.public.url' => '/storage']);
+        $post = Post::create(['title' => 'Ideas & stories', 'slug' => 'ideas-stories', 'seo_summary' => 'A "fresh" start.', 'body' => '<p>Hello</p>', 'post_date' => today(), 'is_published' => true, 'image' => 'posts/cover.jpg', 'image_alt' => 'A garden shed']);
+        $response = $this->get(route('blog.show', $post->slug).'?source=shared')->assertOk();
+        $response->assertSee('<meta property="og:url" content="'.route('blog.show', $post->slug).'">', false)
+            ->assertSee('<meta property="og:title" content="Ideas &amp; stories">', false)
+            ->assertSee('<meta name="twitter:card" content="summary_large_image">', false)
+            ->assertSee('<meta property="og:image" content="'.url('/storage/posts/cover.jpg').'">', false)
+            ->assertSee('<meta name="twitter:image" content="'.url('/storage/posts/cover.jpg').'">', false)
+            ->assertSee('<meta property="og:image:alt" content="A garden shed">', false);
+
+        $post->update(['image' => null]);
+        $this->get(route('blog.show', $post->slug))->assertOk()
+            ->assertSee('<meta name="twitter:card" content="summary">', false)
+            ->assertDontSee('property="og:image"', false)
+            ->assertDontSee('name="twitter:image"', false);
+    }
 }
