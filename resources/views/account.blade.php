@@ -37,7 +37,7 @@
                 <fieldset :disabled="!location" style="border:0;padding:0;margin:0;min-width:0">
                 <label for="subdomain">Your blog address</label>
                 <div class="blog-domain-field"><input id="subdomain" name="subdomain" x-model="subdomain" value="{{ old('subdomain') }}" required minlength="3" maxlength="28" pattern="[a-z0-9]+(-[a-z0-9]+)*" autocomplete="off" aria-describedby="subdomain-help"><span>.blogshed.uk</span></div>
-                <p id="subdomain-help" class="field-help">Use 3–28 lowercase letters, numbers or hyphens. Start and end with a letter or number.</p>
+                <p id="subdomain-help" class="field-help">Use 3–28 lowercase letters, numbers or hyphens.</p>
                 @error('subdomain') <p class="field-error" role="alert">{{ $message }}</p> @enderror
 
                 <label for="description">What do you intend to do with your blog?</label>

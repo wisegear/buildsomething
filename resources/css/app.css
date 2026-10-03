@@ -38,6 +38,8 @@
 .account-grid .panel input:focus-visible{outline:3px solid #ba783e;outline-offset:2px}
 .blog-domain-field{display:flex;align-items:center;gap:8px}.blog-domain-field span{white-space:nowrap;font-size:13px;color:var(--muted)}
 .account-grid .panel .field-help{font-size:12px}.account-grid .panel .field-error{font-size:12px;color:#9b3434}
+.account-grid .panel label[for="description"]{display:block;margin-top:16px}
+.account-grid .panel .terms-agreement{margin-top:14px}
 .account-grid .panel code{display:inline-block;overflow-wrap:anywhere;background:#f0f2e9;border-radius:4px;padding:2px 6px}
 .account-grid .panel p+p{margin-top:12px}.account-grid .panel .button{justify-self:start;margin-top:8px}
 @media(max-width:480px){.blog-domain-field{align-items:stretch;flex-direction:column;gap:4px}}
