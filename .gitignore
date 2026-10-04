@@ -33,3 +33,4 @@ __pycache__/
 /create-wordpress.sh
 /delete-wordpress.sh
 /reset-wordpress-password.sh
+/blogshed-backup.sh
