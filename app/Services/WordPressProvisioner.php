@@ -97,6 +97,9 @@ class WordPressProvisioner
 
     public function create(CustomerBlog $blog, ?Closure $operationState = null): array
     {
+        if ($blog->user?->banned_at !== null) {
+            throw new RuntimeException('Banned accounts cannot create blogs.');
+        }
         $email = $blog->user?->email;
         // Match the script's supported email format before contacting the server.
         if (! is_string($email) || strlen($email) > 254

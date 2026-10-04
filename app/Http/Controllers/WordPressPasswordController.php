@@ -13,7 +13,7 @@ class WordPressPasswordController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
-        abort_unless($request->user()->activated_at !== null, 403);
+        abort_unless($request->user()->activated_at !== null && $request->user()->banned_at === null, 403);
         $data = $request->validateWithBag('wordpressPassword', [
             'password' => ['required', 'string', 'min:12', 'max:128', 'confirmed', 'not_regex:/[\x00-\x1F\x7F]/'],
         ]);

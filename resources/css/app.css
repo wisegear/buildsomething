@@ -83,3 +83,9 @@
 [x-cloak] { display: none !important; }
 
 .post-tags,.topic-filter{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.topic-filter{margin:0 0 32px}.tag-link{display:inline-block;max-width:100%;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:13px;line-height:1.5;color:var(--green);background:#fffefb}.tag-link:hover,.tag-link[aria-current="page"]{background:var(--green);color:#fff}.topic-filter a[aria-current]{text-decoration:none}
+
+.admin-table .admin-user-details td{border-bottom:0;padding-bottom:8px}
+.admin-table .admin-user-signup td{padding-top:0;padding-bottom:14px}
+.signup-summary{display:flex;flex-wrap:wrap;gap:4px 18px;color:var(--muted);font-size:11px;line-height:1.6;white-space:normal;overflow-wrap:anywhere}
+.signup-summary span{min-width:0;max-width:100%}
+.badge-banned{background:var(--peach);color:#843e2a}

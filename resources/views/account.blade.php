@@ -1,19 +1,22 @@
 @extends('layouts.site')
 @section('title', 'Your account — blogshed.uk')
-@if(auth()->user()->activated_at === null || ($customerBlog && in_array($customerBlog->status, ['pending', 'provisioning', 'deleting', 'password_reset_pending', 'password_resetting'])))
+@if(auth()->user()->banned_at === null && (auth()->user()->activated_at === null || ($customerBlog && in_array($customerBlog->status, ['pending', 'provisioning', 'deleting', 'password_reset_pending', 'password_resetting']))))
     @section('head')<meta http-equiv="refresh" content="10">@endsection
 @endif
 @section('content')
 <section class="page-intro wrap">
     <p class="eyebrow">YOU’RE IN GOOD COMPANY</p>
     <h1>Hello, <em>{{ auth()->user()->name }}.</em></h1>
-    <p class="lead">{{ auth()->user()->activated_at ? 'Your account is ready. This is where your next chapter begins.' : 'Welcome to BlogShed. Your account is awaiting activation.' }}</p>
+    <p class="lead">{{ auth()->user()->banned_at ? 'Your account is banned from the blog service.' : (auth()->user()->activated_at ? 'Your account is ready. This is where your next chapter begins.' : 'Welcome to BlogShed. Your account is awaiting activation.') }}</p>
 </section>
 <section class="wrap account-grid">
     <div class="panel">
         <p class="eyebrow">YOUR FREE WORDPRESS WEBSITE</p>
 
-        @if(auth()->user()->activated_at === null)
+        @if(auth()->user()->banned_at !== null)
+            <h2>Your account is banned.</h2>
+            <p role="status">You cannot create a blog. Your account remains available for support.</p>
+        @elseif(auth()->user()->activated_at === null)
             <h2>Your signup is currently being checked.</h2>
             <p role="status">Once an administrator activates your account, you can set up your blog here. This page will update automatically.</p>
         @elseif(! $customerBlog)

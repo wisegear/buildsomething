@@ -74,16 +74,16 @@ class SignupAssessmentTest extends TestCase
 
     public function test_admin_security_details_are_escaped_and_private(): void
     {
-        $this->withHeaders(['User-Agent' => '<script>alert(1)</script>']);
+        $this->withHeaders(['Referer' => '<script>alert(1)</script>']);
         $assessment = $this->register('test@example.com');
         $this->get('/admin/users')->assertForbidden();
         $admin = User::factory()->create();
         $admin->forceFill(['is_admin' => true])->save();
         $this->actingAs($admin)->get('/admin/users')->assertOk()
-            ->assertSee('Signup / Security')->assertSee('192.0.2.10')
+            ->assertDontSee('Signup / Security')->assertSee('Registration IP')->assertSee('Previous signup count')->assertSee('192.0.2.10')
             ->assertSee('<script>alert(1)</script>')->assertDontSee('<script>alert(1)</script>', false)
             ->assertDontSee('Risk flags')->assertDontSee('IP intelligence provider')
-            ->assertDontSee('Not checked')->assertSee('No signup information recorded');
+            ->assertDontSee('Not checked')->assertSee('Not available');
         $assessment->user->delete();
         $this->assertDatabaseMissing('signup_assessments', ['id' => $assessment->id]);
     }

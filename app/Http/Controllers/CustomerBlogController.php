@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\CreateCustomerBlog;
 use App\Models\CustomerBlog;
 use App\Models\Server;
+use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,8 @@ class CustomerBlogController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
+        abort_if($request->user()->banned_at !== null, 403, 'Banned accounts cannot create blogs.');
+
         if ($request->user()->activated_at === null) {
             return redirect()->route('account')->with('status', 'Your signup is currently being checked.');
         }
@@ -38,6 +41,10 @@ class CustomerBlogController extends Controller
 
         try {
             DB::transaction(function () use ($request, $data): void {
+                $user = User::lockForUpdate()->findOrFail($request->user()->id);
+                abort_if($user->banned_at !== null, 403, 'Banned accounts cannot create blogs.');
+                abort_if($user->activated_at === null, 403);
+
                 $servers = Server::where('active', true)->orderBy('id')->lockForUpdate()->get();
                 if ($servers->isEmpty()) {
                     throw ValidationException::withMessages(['location' => 'No locations are available right now. Please try again later.']);

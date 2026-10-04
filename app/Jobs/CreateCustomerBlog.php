@@ -40,6 +40,12 @@ class CreateCustomerBlog implements ShouldQueue
 
         $blog = CustomerBlog::findOrFail($this->blogId);
 
+        if ($blog->user?->banned_at !== null) {
+            $blog->update(['status' => 'failed', 'failure_reason' => 'Banned accounts cannot create blogs.']);
+
+            return;
+        }
+
         if ($blog->user?->activated_at === null) {
             $blog->update(['status' => 'failed', 'failure_reason' => 'Account activation is required before blog setup.']);
 

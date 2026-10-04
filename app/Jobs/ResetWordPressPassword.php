@@ -46,7 +46,7 @@ class ResetWordPressPassword implements ShouldQueue
 
         try {
             $blog = CustomerBlog::findOrFail($this->blogId);
-            if ($blog->user?->activated_at === null || ! is_string($blog->pending_wp_admin_password)) {
+            if ($blog->user?->activated_at === null || $blog->user?->banned_at !== null || ! is_string($blog->pending_wp_admin_password)) {
                 $this->failed(null);
 
                 return;
