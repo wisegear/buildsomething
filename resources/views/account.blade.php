@@ -73,6 +73,7 @@
                 <p>Your blog is ready. Open WordPress to start writing and make it your own.</p>
                 <p><a class="button" href="https://{{ $customerBlog->domain }}/wp-admin" target="_blank" rel="noopener noreferrer">Open WordPress admin ↗</a></p>
                 <p><strong>WordPress username:</strong> {{ $customerBlog->wp_admin_username }}</p>
+                <p class="field-help">Before publishing your first post, go to <strong>Users → Profile</strong> in WordPress, enter a nickname, select it under <strong>Display name publicly as</strong>, and click <strong>Update Profile</strong>. This sets the author name shown on your posts; otherwise, your WordPress username may appear.</p>
                 @if($customerBlog->status === 'active' && $customerBlog->wp_admin_password)
                     <p><strong>WordPress password:</strong> <code>{{ $customerBlog->wp_admin_password }}</code></p>
                 @endif
