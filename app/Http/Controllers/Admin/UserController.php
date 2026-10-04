@@ -36,6 +36,19 @@ class UserController extends Controller
         return back()->with('status', 'User banned. Their account is retained and any blog deletion has been queued.');
     }
 
+    public function unban(User $user): RedirectResponse
+    {
+        DB::transaction(function () use ($user): void {
+            $user = User::lockForUpdate()->findOrFail($user->id);
+            abort_if($user->is_admin, 403, 'Administrators cannot be unbanned.');
+            // Serialize with the ban deletion job's decision to start deletion.
+            $user->customerBlog()->lockForUpdate()->first();
+            $user->forceFill(['banned_at' => null])->save();
+        });
+
+        return back()->with('status', 'User unbanned. Their previous activation status is retained. Blog deletion already started cannot be undone.');
+    }
+
     public function index(): View
     {
         return view('admin.users', ['users' => User::with(['customerBlog', 'signupAssessment'])->orderBy('name')->orderBy('id')->paginate(25)]);

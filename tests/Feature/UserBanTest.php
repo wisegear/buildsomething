@@ -37,6 +37,42 @@ class UserBanTest extends TestCase
         return CustomerBlog::create(['user_id' => $user->id, 'server_id' => $server->id, 'subdomain' => 'test-shed', 'status' => $status]);
     }
 
+    public function test_unban_requires_an_admin_and_preserves_activation(): void
+    {
+        $user = User::factory()->activated()->create();
+        $activatedAt = $user->activated_at;
+        $user->forceFill(['banned_at' => now()])->save();
+        $url = route('admin.users.unban', $user);
+        $this->post($url)->assertRedirect('/login');
+        $this->actingAs($user)->post($url)->assertForbidden();
+        $this->assertNotNull($user->fresh()->banned_at);
+        $admin = $this->admin();
+        $this->actingAs($admin)->get(route('admin.users.index'))->assertSee('Unban');
+        $this->post($url)->assertRedirect()->assertSessionHas('status');
+        $this->assertNull($user->fresh()->banned_at);
+        $this->assertTrue($user->fresh()->activated_at->equalTo($activatedAt));
+        $this->post($url)->assertRedirect();
+        $this->post(route('admin.users.unban', $admin))->assertForbidden();
+    }
+
+    public function test_unban_stops_queued_ban_deletion_but_does_not_reverse_started_deletion(): void
+    {
+        Queue::fake();
+        $user = User::factory()->create();
+        $user->forceFill(['banned_at' => now()])->save();
+        $blog = $this->blog($user);
+        $this->actingAs($this->admin())->post(route('admin.users.unban', $user))->assertRedirect();
+        (new DeleteBannedUserBlog($blog->id))->handle();
+        Queue::assertNothingPushed();
+        $this->assertSame('active', $blog->fresh()->status);
+        $this->assertNull($user->fresh()->activated_at);
+        $user->forceFill(['banned_at' => now()])->save();
+        $blog->update(['status' => 'deleting']);
+        $this->post(route('admin.users.unban', $user))->assertRedirect();
+        $this->assertSame('deleting', $blog->fresh()->status);
+        $this->assertNull($user->fresh()->banned_at);
+    }
+
     public function test_only_admins_can_ban_and_admin_targets_are_protected(): void
     {
         Queue::fake();

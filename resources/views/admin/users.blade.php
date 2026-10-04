@@ -13,6 +13,13 @@
             <td>@if($user->banned_at)<span>—</span>@elseif($user->activated_at)<span class="badge">Activated</span>@else<form method="POST" action="{{ route('admin.users.activate', $user) }}">@csrf<button class="button small" type="submit">Activate User</button></form>@endif</td>
             <td>{{ $user->created_at->format('j M Y') }}</td>
             <td>@if(! $user->is_admin)
+                @if($user->banned_at)
+                    <form method="POST" action="{{ route('admin.users.unban', $user) }}">
+                        @csrf
+                        <button class="button small secondary" type="submit" aria-label="Unban {{ $user->name }}">Unban</button>
+                    </form>
+                    @if($user->customerBlog && in_array($user->customerBlog->status, ['deleting', 'deletion_failed']))<p>Unbanning cannot undo blog deletion already started.</p>@endif
+                @endif
                 @if(! $user->banned_at || ($user->customerBlog && $user->customerBlog->status !== 'deleting'))
                     <form method="POST" action="{{ route('admin.users.ban', $user) }}" x-on:submit="if (!confirm('Ban this user and permanently delete their blog? Their account will be kept.')) $event.preventDefault()">
                         @csrf

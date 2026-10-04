@@ -30,6 +30,7 @@ Route::middleware(['auth', 'can:manage-blog'])->prefix('admin')->name('admin.')-
     Route::get('/', DashboardController::class)->name('index');
     Route::resource('blogs', BlogController::class)->only(['index', 'destroy', 'update']);
     Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+    Route::post('users/{user}/unban', [UserController::class, 'unban'])->name('users.unban');
     Route::post('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::resource('servers', ServerController::class)->except('show');
