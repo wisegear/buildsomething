@@ -28,7 +28,7 @@ Route::post('/account/blog/password', [WordPressPasswordController::class, 'stor
 Route::middleware(['auth', 'can:manage-blog'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('support', [SupportController::class, 'adminIndex'])->name('support.index');
     Route::get('/', DashboardController::class)->name('index');
-    Route::resource('blogs', BlogController::class)->only(['index', 'destroy']);
+    Route::resource('blogs', BlogController::class)->only(['index', 'destroy', 'update']);
     Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
     Route::post('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
     Route::get('users', [UserController::class, 'index'])->name('users.index');

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['server_id', 'user_id', 'subdomain', 'description', 'terms_accepted', 'status', 'wp_admin_username', 'wp_admin_password', 'failure_reason', 'provisioned_at', 'pending_wp_admin_password', 'password_reset_token'])]
+#[Fillable(['workers', 'memory_mb', 'pending_workers', 'pending_memory_mb', 'resource_update_token', 'server_id', 'user_id', 'subdomain', 'description', 'terms_accepted', 'status', 'wp_admin_username', 'wp_admin_password', 'failure_reason', 'provisioned_at', 'pending_wp_admin_password', 'password_reset_token'])]
 #[Hidden(['wp_admin_password', 'pending_wp_admin_password', 'password_reset_token'])]
 class CustomerBlog extends Model
 {
@@ -19,6 +19,8 @@ class CustomerBlog extends Model
             'pending_wp_admin_password' => 'encrypted',
             'provisioned_at' => 'datetime',
             'terms_accepted' => 'boolean',
+            'workers' => 'integer', 'memory_mb' => 'integer',
+            'pending_workers' => 'integer', 'pending_memory_mb' => 'integer',
         ];
     }
 

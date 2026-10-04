@@ -59,6 +59,8 @@ class CreateCustomerBlog implements ShouldQueue
             $this->remoteOperationUncertain = false;
             $blog->update([
                 'status' => 'active',
+                'workers' => 5,
+                'memory_mb' => 512,
                 'wp_admin_username' => $credentials['username'],
                 'wp_admin_password' => $credentials['password'],
                 'provisioned_at' => now(),

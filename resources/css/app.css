@@ -89,3 +89,5 @@
 .signup-summary{display:flex;flex-wrap:wrap;gap:4px 18px;color:var(--muted);font-size:11px;line-height:1.6;white-space:normal;overflow-wrap:anywhere}
 .signup-summary span{min-width:0;max-width:100%}
 .badge-banned{background:var(--peach);color:#843e2a}
+
+.resource-form{display:grid;gap:8px;min-width:170px;margin-top:12px}.resource-form label{font-size:12px}.resource-form input{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:#fffdf8}.resource-form .button{font-size:12px;padding:10px}

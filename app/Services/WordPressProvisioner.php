@@ -9,6 +9,38 @@ use RuntimeException;
 
 class WordPressProvisioner
 {
+    public function updateResources(CustomerBlog $blog, ?Closure $operationState = null): void
+    {
+        $server = $blog->server;
+        if (! $server || ! filter_var($server->ip_address, FILTER_VALIDATE_IP)
+            || ! preg_match('/\\A[a-z0-9][a-z0-9-]{1,26}[a-z0-9]\\z/', $blog->subdomain)
+            || $blog->pending_workers < 1 || $blog->pending_workers > 50
+            || $blog->pending_memory_mb < 32 || $blog->pending_memory_mb > 2048) {
+            throw new RuntimeException('Invalid resource update target or limits.');
+        }
+        $user = config('blogshed.ssh_user');
+        $key = config('blogshed.ssh_key');
+        if (! $user || ! $key) {
+            throw new RuntimeException('Server SSH access is not configured.');
+        }
+        $command = ['ssh', '-i', $key, '-p', (string) config('blogshed.ssh_port'),
+            '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes', '-o', 'ConnectTimeout=10',
+            $user.'@'.$server->ip_address, 'sudo', '-n', '/usr/local/bin/update-wordpress-resources',
+            $blog->subdomain, (string) $blog->pending_workers, (string) $blog->pending_memory_mb];
+        $operationState?->__invoke(true);
+        $result = Process::timeout(300)->run($command);
+        if ($result->exitCode() !== null && $result->exitCode() >= 0 && $result->exitCode() < 128) {
+            $operationState?->__invoke(false);
+        }
+        $data = json_decode(trim($result->output()), true);
+        if ($result->failed() || ! is_array($data) || ($data['success'] ?? null) !== true
+            || ($data['domain'] ?? null) !== $blog->domain
+            || ($data['workers'] ?? null) !== $blog->pending_workers
+            || ($data['memory_mb'] ?? null) !== $blog->pending_memory_mb) {
+            throw new RuntimeException('The server did not confirm the resource update.');
+        }
+    }
+
     public function delete(CustomerBlog $blog, ?Closure $operationState = null): void
     {
         $server = $blog->server;
