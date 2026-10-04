@@ -6,7 +6,7 @@
 <nav aria-label="Main navigation"><a href="{{ route('home') }}#how-it-works">How it works</a><a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif>Field notes</a><a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif>About</a><a href="{{ route('terms') }}" @if(request()->routeIs('terms')) aria-current="page" @endif>Terms</a></nav>
 <div class="nav-actions">
     @auth
-        <details class="account-menu" x-data @click.outside="$el.open = false" @keydown.escape.prevent.stop="$el.open = false; $refs.accountToggle.focus()" @focusout="if (!$el.contains($event.relatedTarget)) $el.open = false">
+        <details class="account-menu" x-data @click.outside="$el.open = false" @keydown.escape.prevent.stop="$el.open = false; $refs.accountToggle.focus()" @focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) $el.open = false">
             <summary x-ref="accountToggle"><span class="account-name">{{ auth()->user()->name }}</span><span class="account-chevron" aria-hidden="true">⌄</span></summary>
             <div class="account-dropdown">
                 <a href="{{ route('account') }}">Blog Page</a>
